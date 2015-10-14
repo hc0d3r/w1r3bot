@@ -35,16 +35,15 @@ sub get_procs {
 }
 
 sub new_proc {
-    my $self = shift;
-    my $call = {@_};
+    my($self,%call) = @_;
 
     my $pid = fork();
 
     if($pid){
         push(@{ $self->{'pids'} }, {
-            description => $call->{'description'},
+            description => $call{'description'},
             pid => $pid,
-            user => $call->{'user'}
+            user => $call{'user'}
         });
 
         waitpid($pid, WNOHANG);
@@ -53,7 +52,7 @@ sub new_proc {
     }
 
     elsif($pid == 0){
-        $call->{'function'}($call->{'parameters'});
+        $call{'function'}(@{ $call{'parameters'} });
         exit 0;
     }
 

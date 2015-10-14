@@ -153,12 +153,12 @@ sub main_loop {
               if($functions->{'background'}){
                   $forkontrol->new_proc(
                       function => $functions->{'function'},
-                      parameters => [$self, @sad],
+                      parameters => [$self,@sad],
                       user => $user,
                       description => "$mess"
                   );
               } else {
-                  $functions->{'function'}([$self, @sad]);
+                  $functions->{'function'}($self, @sad);
               }
             }
           }

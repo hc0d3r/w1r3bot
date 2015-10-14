@@ -13,7 +13,7 @@ use Socket qw(SOCK_STREAM AF_INET unpack_sockaddr_in unpack_sockaddr_in6 pack_so
 use constant CHECK_PORT_TIMEOUT => 4;
 
 sub check_port {
-    my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+    my($bot_class,$user,$host,$chan,$parameters ) = @_;
 
     my @xattr = split / /,$parameters;
     my $xhost = shift @xattr;

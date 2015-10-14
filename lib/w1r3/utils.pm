@@ -8,7 +8,7 @@ our @ISA = qw(Exporter);
 our @EXPORT = qw(bot_help exit_cmd join_chan leave_chan give_adm list_adms jobs_list kill_by_id exec_cmd);
 
 sub bot_help {
-  my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+  my($bot_class,$user,$host,$chan,$parameters ) = @_;
 
   $bot_class->xsend("PRIVMSG $chan :- w1r3b0t v".&w1r3bot::VERSION."\r\n");
   $bot_class->xsend("PRIVMSG $chan :- coded by \@hc0d3r\r\n");
@@ -41,7 +41,7 @@ sub bot_help {
 }
 
 sub exit_cmd {
-  my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+  my($bot_class,$user,$host,$chan,$parameters ) = @_;
 
   $bot_class->{'forkontrol'}->killenall;
 
@@ -52,7 +52,7 @@ sub exit_cmd {
 }
 
 sub join_chan {
-  my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+  my($bot_class,$user,$host,$chan,$parameters ) = @_;
 
   for(split / /, $parameters){
     $bot_class->xsend("JOIN $_\r\n");
@@ -60,7 +60,7 @@ sub join_chan {
 }
 
 sub leave_chan {
-  my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+  my($bot_class,$user,$host,$chan,$parameters ) = @_;
 
   if(!$parameters && $chan =~ /^#/){
     $bot_class->xsend("PART $chan\r\n");
@@ -74,7 +74,7 @@ sub leave_chan {
 }
 
 sub give_adm {
-  my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+  my($bot_class,$user,$host,$chan,$parameters ) = @_;
 
   chomp $parameters;
 
@@ -85,7 +85,7 @@ sub give_adm {
 }
 
 sub list_adms {
-  my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+  my($bot_class,$user,$host,$chan,$parameters ) = @_;
 
   my $adm = join ",", @{ $bot_class->{'admins'} };
   $bot_class->xsend("PRIVMSG $chan :[ adms ] - $adm\r\n");
@@ -93,7 +93,7 @@ sub list_adms {
 }
 
 sub jobs_list {
-    my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+    my($bot_class,$user,$host,$chan,$parameters ) = @_;
     $bot_class->{'forkontrol'}->get_procs; # gambiarra pra apagar os processos =\
     my @proc_list = @{ $bot_class->{'forkontrol'}->get_procs };
 
@@ -109,7 +109,7 @@ sub jobs_list {
 }
 
 sub kill_by_id {
-    my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+    my($bot_class,$user,$host,$chan,$parameters ) = @_;
     my @proc_list = @{ $bot_class->{'forkontrol'}->get_procs };
 
     foreach(@proc_list){
@@ -124,7 +124,7 @@ sub kill_by_id {
 }
 
 sub exec_cmd {
-    my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+    my($bot_class,$user,$host,$chan,$parameters ) = @_;
 
     my $hand;
 

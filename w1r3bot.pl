@@ -227,8 +227,6 @@ $bot->add_function(
 );
 
 
-
-
 $bot->add_function(
     cmd => "!help",
     description => "display functions help",
@@ -237,11 +235,6 @@ $bot->add_function(
     background => 1
 );
 
-sub test {
-    my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
-    $bot_class->xsend("PRIVMSG $chan :user-> $user | host-> $host | chan-> $chan | parameters-> $parameters\r\n");
-    sleep 50;
-}
 
 if( $bot->xconnect(
         host => $opts{'host'},
