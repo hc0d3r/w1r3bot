@@ -102,6 +102,7 @@ sub main_loop {
 
     my $forkontrol = $self->{'forkontrol'};
 
+    print "[+] Sending user and nick name ...\n";
     $self->xsend ("NICK ".$self->{'nick'}."\r\n");
     $self->xsend ("USER ".$self->{'username'}." 8 x : ".$self->{'realname'}."\r\n");
 
@@ -117,14 +118,18 @@ sub main_loop {
         elsif($_ =~ /^.+ 443 .+/){
           $self->{'nick'} =  $self->{'nick'}."|".int rand(time);
           $self->xsend("NICK ".$self->{'nick'}."\r\n");
+          print "[-] Nickname invalid, trying use other nick: ".$self->{'nick'}."\n";
+
         }
 
         elsif($_ =~ /^:.+\s+001\s+.*/){
           if($self->{'password'}){
+              print "[-] Sending auth to server\n";
             $self->xsend("IDENTIFY ".$self->{'password'}."\r\n");
           }
 
           foreach(@{ $self->{'join_chans'}}){
+             print "[+] Join to chans\n";
             $self->xsend("JOIN $_\r\n");
           }
 
@@ -136,7 +141,7 @@ sub main_loop {
           my $chan = $3;
           my $mess = $4;
 
-        if($chan eq $user){
+        if($chan eq $self->{'nick'}){
             $chan = $user;
             print "[PRIVATE MESSAGE] ($user:$host) $mess\n";
         } else {
