@@ -7,7 +7,7 @@ use forkontrol;
 use w1r3socket;
 
 use constant {
-    VERSION => "0.1",
+    VERSION => "0.1.3",
     DEFAULT_NICK => "w1r3bot",
     DEFAULT_USER => "w1r3bot",
     DEFAULT_NAME => "w1r3bot"
