@@ -108,7 +108,7 @@ sub main_loop {
     $| = 1;
 
     while(<$sock>){
-        print $_;
+        print $_ if($self->{'debug'});
 
         if($_ =~ /^PING (.+)$/){
           $self->xsend("PONG $1\r\n");
@@ -136,9 +136,12 @@ sub main_loop {
           my $chan = $3;
           my $mess = $4;
 
-          if($chan eq $self->{'nick'}){
+        if($chan eq $user){
             $chan = $user;
-          }
+            print "[PRIVATE MESSAGE] ($user:$host) $mess\n";
+        } else {
+            print "[$chan] ($user:$host) $mess\n";
+        }
 
           foreach my $functions(@{ $self->{'functions'} }){
             if($mess =~ /^$functions->{'cmd'}\s*([^\n|\r]*)/){

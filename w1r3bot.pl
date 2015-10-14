@@ -242,6 +242,7 @@ if( $bot->xconnect(
         verbose => 1,
         timeout => $opts{'timeout'},
 )){
+    print "[+] Connected waiting for commands ...\n\n";
     $bot->main_loop;
 } else {
     warn "[-] Failed to connect on ".$opts{'host'}.":".$opts{'port'}." (".$bot->{'w1r3socket'}->get_err.")\n\n";
