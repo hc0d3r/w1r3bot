@@ -49,3 +49,21 @@ my($bot_class,$user,$host,$chan,$parameters) = @_;
 # $chan is the channel to response
 # $parameters is the parameters after the command
 ```
+Example:
+```perl
+$bot->add_function(
+    cmd => "!test",
+    description => "test command",
+    admin => 0,
+    function => \&test_function,
+    background => 1
+);
+
+sub test {
+    my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+    $bot_class->xsend("PRIVMSG $chan :user-> $user | host-> $host | chan-> $chan | parameters-> $parameters\r\n");
+    sleep 50;
+}
+
+
+```
