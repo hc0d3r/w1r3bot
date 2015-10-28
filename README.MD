@@ -60,7 +60,7 @@ $bot->add_function(
 );
 
 sub test {
-    my($bot_class,$user,$host,$chan,$parameters ) = @{ $_[0] };
+    my($bot_class,$user,$host,$chan,$parameters ) = @_;
     $bot_class->xsend("PRIVMSG $chan :user-> $user | host-> $host | chan-> $chan | parameters-> $parameters\r\n");
     sleep 50;
 }
