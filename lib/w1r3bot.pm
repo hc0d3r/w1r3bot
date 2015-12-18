@@ -116,7 +116,7 @@ sub main_loop {
           $self->xsend("PONG $1\r\n");
         }
 
-        elsif($_ =~ /^:([^ ]+) 443 .+/){
+        elsif($_ =~ /^:([^ ]+) 433 .+/){
           $self->{'nick'} =  $self->{'nick'}."|".int rand(time);
           $self->xsend("NICK ".$self->{'nick'}."\r\n");
           print "[-] Nickname invalid, trying use other nick: ".$self->{'nick'}."\n";
