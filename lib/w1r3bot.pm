@@ -27,6 +27,7 @@ sub new {
         realname => $attr{realname} || DEFAULT_NAME,
         password => $attr{password} || undef,
         join_chans => [],
+		debug => $attr{debug} || 0
     };
 
     bless $elements, $self;
