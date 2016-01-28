@@ -3,10 +3,10 @@ package w1r3socket;
 use strict;
 use warnings;
 
-#use Socket qw/:all/;
 use Socket qw(SOCK_STREAM AF_INET unpack_sockaddr_in unpack_sockaddr_in6 pack_sockaddr_in pack_sockaddr_in6 getaddrinfo inet_ntop SOL_SOCKET SO_ERROR);
 use Fcntl;
 use IO::Select;
+use Errno;
 
 sub new {
     my $class = shift;
@@ -55,13 +55,14 @@ sub xconnect {
 
         $self->{'sockfd'} = $sock;
 
+        # NON_BLOCK
         $flags = fcntl($sock, F_GETFL, 0);
         fcntl($sock, F_SETFL, $flags | O_NONBLOCK);
         vec($rin,fileno($sock),1) = 1;
 
         connect($sock, $pack_con);
 
-        if( $! ){
+        if( $!{EINPROGRESS} ){
            if( select($rin, $rin, $rin, $self->{'timeout'} || $attr{timeout}) > 0){
                 my $sock_err = getsockopt($sock, SOL_SOCKET, SO_ERROR);
                 $sock_err = unpack("I", $sock_err);
@@ -86,11 +87,18 @@ sub xconnect {
         }
 
         else {
+            warn "[w1r3socket::xconnect] - Connection failed" if($attr{verbose});
+            $self->{'err'} = $!;
+        }
+
+=head
+        else {
             print "[w1r3socket::xconnect] - Connection established\n" if($attr{verbose});
             undef $self->{'err'};
             fcntl($sock, F_SETFL, $flags);
             return 1;
         }
+=cut
 
         close $sock;
         undef $self->{'sockfd'};
