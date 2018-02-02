@@ -38,86 +38,48 @@ HELP
 };
 
 sub parser_opts {
-    my $output = shift;
+    my($out,$in) = @_;
+    my $ok;
 
-    for(my $i=0; $i<=$#ARGV; $i++){
-        if("-c" eq $ARGV[$i]){
-            if($ARGV[++$i]){
-                $$output{'host'} = $ARGV[$i];
+    for(my $i=0; $i<@ARGV; $i++){
+        $ok = 0;
+
+        foreach my $arg( keys %$in){
+            my($need_arg,$argname) = @{ $in->{$arg} };
+
+            if($ARGV[$i] =~ /^-$arg$/){
+                $ok = 1;
+                if(!$need_arg){
+                    $$out{$argname} = 1;
+                } else {
+                    die "-$arg: needs argument\n" if(!defined $ARGV[++$i]);
+                    $$out{$argname} = $ARGV[$i];
+                }
+
+                last;
             }
         }
 
-        elsif("-p" eq $ARGV[$i]){
-            if($ARGV[++$i]){
-                $$output{'port'} = $ARGV[$i];
-            }
-        }
-
-        elsif("-n" eq $ARGV[$i]){
-            if($ARGV[++$i]){
-                $$output{'nick'} = $ARGV[$i];
-            }
-        }
-
-        elsif("-u" eq $ARGV[$i]){
-            if($ARGV[++$i]){
-                $$output{'user'} = $ARGV[$i];
-            }
-        }
-
-        elsif("-r" eq $ARGV[$i]){
-            if($ARGV[++$i]){
-                $$output{'realname'} = $ARGV[$i];
-            }
-        }
-
-        elsif("-p" eq $ARGV[$i]){
-            if($ARGV[++$i]){
-                $$output{'password'} = $ARGV[$i];
-            }
-        }
-
-        elsif("-j" eq $ARGV[$i]){
-            if($ARGV[++$i]){
-                @{ $$output{'chans'} } = split /,/, $ARGV[$i];
-            }
-        }
-
-        elsif("-a" eq $ARGV[$i]){
-            if($ARGV[++$i]){
-                @{ $$output{'admins'} } = split /,/, $ARGV[$i];
-            }
-        }
-
-        elsif("-t" eq $ARGV[$i]){
-            if($ARGV[++$i]){
-                $$output{'timeout'} = $ARGV[$i];
-            }
-        }
-
-        elsif("-h" eq $ARGV[$i]){
-            &help_banner;
-        }
-
-        elsif("-4" eq $ARGV[$i]){
-            $$output{'ipv4'} = 1;
-        }
-
-        elsif("-6" eq $ARGV[$i]){
-            $$output{'ipv6'} = 1;
-        }
-
-        else {
-            warn $ARGV[$i]." Not is a valid paramter\n";
-            exit;
-        }
-
+        die "Invalid option: $ARGV[$i]\n" if(!$ok);
     }
-
 }
 
 my(%opts);
-parser_opts \%opts;
+parser_opts \%opts, {
+    c => [1, 'host'],
+    p => [1, 'port'],
+    n => [1, 'nick'],
+    u => [1, 'user'],
+    r => [1, 'realname'],
+    j => [1, 'chans'],
+    a => [1, 'admins'],
+    t => [1, 'timeout'],
+    h => [0, 'help'],
+    4 => [0, 'ipv4'],
+    6 => [0, 'ipv6']
+};
+
+help_banner if($opts{'help'});
 
 if(!$opts{'host'} || !$opts{'port'}){
     warn "\nYou must set a host and port to connect\n";
@@ -136,8 +98,11 @@ if(!$opts{'nick'}){
 if(!$opts{'admins'}){
     warn "[-] You not set admins, many functions needs admin priv !\n";
 } else {
+    $opts{'admins'} = [split /,/, $opts{'admins'}];
     print "[+] Admin list: ".(join ",",@{ $opts{'admins'} })."\n";
 }
+
+$opts{'chans'} = [split /,/, $opts{'chans'}] if(defined $opts{'chans'});
 
 print "[+] Chan list: ".(join ",",@{ $opts{'chans'} })."\n" if($opts{'chans'});
 print "[+] Connecting ...\n";
