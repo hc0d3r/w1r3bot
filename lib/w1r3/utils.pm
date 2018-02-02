@@ -94,7 +94,6 @@ sub list_adms {
 
 sub jobs_list {
     my($bot_class,$user,$host,$chan,$parameters ) = @_;
-    $bot_class->{'forkontrol'}->get_procs; # gambiarra pra apagar os processos =\
     my @proc_list = @{ $bot_class->{'forkontrol'}->get_procs };
 
     $bot_class->xsend("PRIVMSG $chan : [ listing process ] start !@#%\r\n");

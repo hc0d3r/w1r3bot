@@ -3,6 +3,7 @@ package forkontrol;
 use strict;
 use warnings;
 use POSIX ":sys_wait_h";
+$SIG{CHLD}='IGNORE';
 
 sub new {
     my $self = shift;
@@ -19,9 +20,9 @@ sub get_procs {
 
     for(my $i=0; $i<=$#arr; $i++){
         next if(!$arr[$i]->{'pid'});
-        my $check = waitpid($arr[$i]->{'pid'}, WNOHANG);
+        my $check = kill 0, $arr[$i]->{'pid'};
 
-        if($check == -1){
+        if($check == 0){
             delete $arr[$i];
         } else {
             push(@new_array, $arr[$i]);
