@@ -24,7 +24,7 @@ sub help_banner {
   -n > set your nickname
   -u > set username
   -r > set real username
-  -p > set your password
+  -pw > set your password
   -j > chans to join
   -a > set admins
   -h > display this help menu
@@ -76,7 +76,8 @@ parser_opts \%opts, {
     t => [1, 'timeout'],
     h => [0, 'help'],
     4 => [0, 'ipv4'],
-    6 => [0, 'ipv6']
+    6 => [0, 'ipv6'],
+    pw => [1, 'password']
 };
 
 help_banner if($opts{'help'});
