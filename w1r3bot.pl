@@ -4,14 +4,13 @@
 # you can do anything with this code, except sale it,
 # is very recommend print this and use as toilet paper
 
-BEGIN { push @INC, './lib/' }
+BEGIN { push @INC, './lib/'; push @INC, './plugins/'; }
 
 use strict;
 use warnings;
 use w1r3bot;
-
-use w1r3::utils;
 use w1r3::net;
+use Module::Load;
 
 sub help_banner {
     print <<HELP;
@@ -120,87 +119,11 @@ my $bot = new w1r3bot(
 $bot->set_admins(@{ $opts{'admins'} });
 $bot->join_chans(@{ $opts{'chans'} });
 
-$bot->add_function(
-    cmd => "!exit",
-    description => "exit bot",
-    admin => 1,
-    function => \&exit_cmd,
-    background => 0
-);
-
-$bot->add_function(
-    cmd => "!join",
-    description => "join chan(s) -> !join #chan1 ...",
-    admin => 1,
-    function => \&join_chan,
-    background => 0
-);
-
-$bot->add_function(
-    cmd => "!leave",
-    description => "leave chan(s), -> !leave, !leave #chan1 ...",
-    admin => 1,
-    function => \&leave_chan,
-    background => 0
-);
-
-$bot->add_function(
-    cmd => "!show_adms",
-    description => "return list of current admins",
-    admin => 1,
-    function => \&list_adms,
-    background => 0
-);
-
-$bot->add_function(
-    cmd => "!give_adm",
-    description => "give adm privilege to users, !give_adm user1 ...",
-    admin => 1,
-    function => \&give_adm,
-    background => 0
-);
-
-$bot->add_function(
-    cmd => "!jobs",
-    description => "display works in background",
-    admin => 1,
-    function => \&jobs_list,
-    background => 0
-);
-
-$bot->add_function(
-    cmd => "!kill",
-    description => "kill process by id, !kill 12345",
-    admin => 1,
-    function => \&kill_by_id,
-    background => 0
-);
-
-$bot->add_function(
-    cmd => "!system",
-    description => "execute commands in the local machine, !system id;pwd;ls",
-    admin => 1,
-    function => \&exec_cmd,
-    background => 1
-);
-
-$bot->add_function(
-    cmd => "!port",
-    description => "check if port is open, !port 127.0.0.1 12345 ...",
-    admin => 0,
-    function => \&check_port,
-    background => 1
-);
-
-
-$bot->add_function(
-    cmd => "!help",
-    description => "display functions help",
-    admin => 0,
-    function => \&bot_help,
-    background => 1
-);
-
+foreach my $file(glob("plugins/*.pm")){
+	$file =~ s/plugins\/(.*).pm$/$1/;
+	load $file;
+	$file->load_functions($bot);
+}
 
 if( $bot->xconnect(
         host => $opts{'host'},
